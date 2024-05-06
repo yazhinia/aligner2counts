@@ -8,7 +8,6 @@ Require g++ version `>=9.4.0`
 
 # Usage
 On the fly mapping and processing,
-	
 
  	bowtie2 -q -x <ref_index> <reads.fq> | ./aligner2counts <output_directory> <sample_id>
 

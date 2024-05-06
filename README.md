@@ -1,0 +1,1 @@
+This repository contains script to process read mapping file (.bam) on the fly with mapping process and produce 3 outputs (i) read abundance of contigs, (ii) fraction of reads shared between contigs if found (split-read mapping) and (iii) alignment file in `.sam` format

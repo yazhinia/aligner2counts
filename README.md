@@ -11,7 +11,7 @@ On the fly mapping and processing,
 
  	bowtie2 -q -x <ref_index> <reads.fq> | ./aligner2counts <output_directory> <sample_id>
 
-Process `.bam` or `.sam` file
+Process `.bam` or `.sam` (requires samtools preinstalled)
 
  	bamtools view <input_alignment> | ./aligner2counts <output_directory> <sample_id>
 

@@ -7,8 +7,8 @@ As of now, it is specialized to process only bowtie mapping.
 Require g++ version `>=9.4.0`
 
 # Usage
-On the fly mapping and processing
+On the fly mapping and processing,
 	bowtie2 -q -x <ref_index> <reads.fq> | ./aligner2counts <output_directory> <sample_id>
 
 Process `.bam` or `.sam` file
-	samtools view <input_alignment> | ./aligner2counts <output_directory> <sample_id>
+	amtools view <input_alignment> | ./aligner2counts <output_directory> <sample_id>

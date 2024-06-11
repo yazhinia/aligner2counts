@@ -56,7 +56,6 @@ void addpairlinks(ContigLinks& contiglinks, const std::string& c1, const std::st
     std::string first = (c1 < c2) ? c1 : c2;
     std::string second = (c1 < c2) ? c2 : c1;
     std::pair<std::string, std::string> linkPair = std::make_pair(first, second);
-
     contiglinks[linkPair] += frac_contigs_mapped;
 }
 
@@ -233,6 +232,14 @@ void counting(AlnParser &parsedaln, ContigsMap &contigs_map, ContigLinks &contig
             // add shared reads links to contigs
             for (std::size_t i = 0; i < contiglist.size(); ++i) {
                 for (std::size_t j = i + 1; j < contiglist.size(); ++j) {
+                    auto it1 = contigs_map.find(contiglist[i]);
+                    auto it2 = contigs_map.find(contiglist[j]);
+                    // sometimes, due to more weight added to paired assignment, 
+                    // frac_contigs_mapped can be higher than total counts mapped to contigs in the pair
+                    // correct it by checking and setting it to total count of lower abundant contig in a pair
+                    if ((it1->second < frac_contigs_mapped) || (it2->second < frac_contigs_mapped)) {
+                        frac_contigs_mapped = (it1->second < it2->second) ? it1->second : it2->second;
+                    }
                     addpairlinks(contig_links, contiglist[i], contiglist[j], frac_contigs_mapped);
                 }
             }
@@ -261,6 +268,7 @@ void fractionate_countlinks(ContigLinks &contiglinks, ContigsMap &contigs_map, s
         }
         normalize_factor = (count_1 < count_2) ? count_1 : count_2;
         frac_links /= normalize_factor;
+
         // output file format: (i) pair_contig 1, (ii) pair_contig 2, 
         // (iii) fraction of value obtained from the mapped read, (iv) iii normalized by the total count of shortest contig in the pair
         linkfile << k.first.first << " " << k.first.second << " " << k.second << " " << frac_links << "\n";

@@ -266,7 +266,7 @@ void fractionate_countlinks(ContigLinks &contiglinks, ContigsMap &contigs_map, s
         frac_links /= normalize_factor;
 
         // output file format: (i) pair_contig 1, (ii) pair_contig 2, 
-        // (iii) fraction of value obtained from the mapped read, (iv) iii normalized by the total count of shortest contig in the pair
+        // (iii) fraction of value obtained from the split-mapped read, (iv) iii normalized by the total count of shortest contig in the pair
         linkfile << k.first.first << " " << k.first.second << " " << k.second << " " << frac_links << "\n";
     }
     linkfile.close();

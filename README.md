@@ -13,5 +13,5 @@ On the fly mapping and processing,
 
 Process `.bam` or `.sam` (requires samtools preinstalled)
 
- 	bamtools view <input_alignment> | ./aligner2counts <output_directory> <sample_id>
+ 	samtools view -h <input_alignment> | ./aligner2counts <output_directory> <sample_id>
 

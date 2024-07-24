@@ -59,12 +59,7 @@ void addpairlinks(
     
     std::string first = (c1 < c2) ? c1 : c2;
     std::string second = (c1 < c2) ? c2 : c1;
-<<<<<<< HEAD
-    std::pair<std::string, std::string> linkPair = std::make_pair(first, second);
-    contiglinks[linkPair] += frac_contigs_mapped;
-=======
     contiglinks[std::make_pair(first, second)] += frac_contigs_mapped;
->>>>>>> 2debd9a (update)
 }
 
 void construct_map(
@@ -230,17 +225,12 @@ void counting(AlnParser &parsedaln, ContigsMap &contigs_map, ContigsMap &unique_
     //     // eachcount << parsedaln[r].read << " " << parsedaln[r].contig << " " << parsedaln[r].pair_dir << " " << parsedaln[r].paired << " " << parsedaln.size() << " " << parsedaln[r].sequence_identity << "\n";
     // }
 
-<<<<<<< HEAD
-    if (it->sequence_identity >= sequenceidentity) {
-        parsedaln.erase(std::remove_if(parsedaln.begin(),parsedaln.end(), [&](const al_data& a) { return it->sequence_identity > a.sequence_identity;}), parsedaln.end());
-=======
     if (max_it->sequence_identity >= sequenceidentity) {
         parsedaln.erase(
             std::remove_if(parsedaln.begin(),parsedaln.end(), [&](const al_data& a) { 
                 return max_it->sequence_identity > a.sequence_identity;}),
             parsedaln.end()
             );
->>>>>>> 2debd9a (update)
 
         if (parsedaln.size() > 0) {
             // Check if there are any elements with paired == true
@@ -262,38 +252,6 @@ void counting(AlnParser &parsedaln, ContigsMap &contigs_map, ContigsMap &unique_
             }
 
             float frac_contigs_mapped = 1.0f / parsedaln.size();
-<<<<<<< HEAD
-            float value_unpaired = 0.0f, value_added_to_paired = 0.0f, value_added_per_paired = 0.0f;
-            if (paired_count > 0) {
-                value_unpaired = frac_contigs_mapped / 2.0f;
-                value_added_to_paired = value_unpaired * non_paired_count;
-                value_added_per_paired = value_added_to_paired / paired_count;
-            } else {
-                value_unpaired = frac_contigs_mapped; // likely discordant alignment
-            }
-
-            std::vector<std::string> contiglist;
-            for (size_t r = 0; r < parsedaln.size(); r++) {
-                contiglist.push_back(parsedaln[r].contig);
-                auto it = contigs_map.find(parsedaln[r].contig);
-                if (parsedaln[r].paired) {
-                    it->second = it->second + frac_contigs_mapped + value_added_per_paired;
-                    // std::cout << parsedaln[r].read << " " << parsedaln[r].contig << " " << parsedaln[r].pair_dir << " " << parsedaln[r].paired << " " << parsedaln[r].sequence_identity << " " << frac_contigs_mapped + value_added_per_paired << " after filter set \n";
-                    eachcount << parsedaln[r].read << " " << parsedaln[r].contig << " " << parsedaln[r].pair_dir << " " << parsedaln[r].paired << " " << parsedaln.size() << " " << frac_contigs_mapped + value_added_per_paired << "\n";
-                } else {
-                    it->second = it->second + value_unpaired;
-                    // std::cout << parsedaln[r].read << " " << parsedaln[r].contig << " " << parsedaln[r].pair_dir << " " << parsedaln[r].paired << " " << parsedaln[r].sequence_identity << " " << value_unpaired << " after filter set \n";
-                    eachcount << parsedaln[r].read << " " << parsedaln[r].contig << " " << parsedaln[r].pair_dir << " " << parsedaln[r].paired << " " << parsedaln.size() << " " << value_unpaired << "\n";
-                }
-            }
-
-            // add shared reads links to contigs
-            for (std::size_t i = 0; i < contiglist.size(); ++i) {
-                for (std::size_t j = i + 1; j < contiglist.size(); ++j) {
-                    auto it1 = contigs_map.find(contiglist[i]);
-                    auto it2 = contigs_map.find(contiglist[j]);
-                    addpairlinks(contig_links, contiglist[i], contiglist[j], frac_contigs_mapped);
-=======
 
             // Update counts in contigs_map and unique_map or cross_map
             if (parsedaln.size() == 1) {
@@ -312,7 +270,6 @@ void counting(AlnParser &parsedaln, ContigsMap &contigs_map, ContigsMap &unique_
                     for (std::size_t j = i + 1; j < contiglist.size(); ++j) {;
                         addpairlinks(contig_links, contiglist[i], contiglist[j], frac_contigs_mapped);
                     }
->>>>>>> 2debd9a (update)
                 }
                 // clear contiglist data of current read alignments
                 contiglist.clear();
@@ -326,34 +283,9 @@ void counting(AlnParser &parsedaln, ContigsMap &contigs_map, ContigsMap &unique_
 void fractionate_countlinks(ContigLinks &contiglinks, ContigsMap &contigs_map, std::string &tmp_dir, std::string &outname) {
     std::ofstream linkfile;
     linkfile.open(tmp_dir + '/' + outname + "_countlinks");
-<<<<<<< HEAD
-    float count_1 = 1.0f, count_2 = 1.0f, normalize_factor = 1.0f;
-    for (auto const & k: contiglinks) {
-        float frac_links = k.second;
-        if (contigs_map.find(k.first.first) != contigs_map.end()) {
-            count_1 = contigs_map[k.first.first];
-        } else {
-            std::cerr << k.first.first << " is not present in contigs_map constructed. Revisit the code \n";
-        }
-        if (contigs_map.find(k.first.second) != contigs_map.end()) {
-            count_2 = contigs_map[k.first.second];
-        } else {
-            std::cerr << k.first.second << " is not present in contigs_map constructed. Revisit the code \n";
-        }
-        normalize_factor = (count_1 < count_2) ? count_1 : count_2;
-        if (frac_links > normalize_factor) {
-            frac_links = normalize_factor;
-        }
-        frac_links /= normalize_factor;
-
-        // output file format: (i) pair_contig 1, (ii) pair_contig 2, 
-        // (iii) fraction of value obtained from the split-mapped read, (iv) iii normalized by the total count of shortest contig in the pair
-        linkfile << k.first.first << " " << k.first.second << " " << k.second << " " << frac_links << "\n";
-=======
     if (!linkfile.is_open()) {
         std::cerr << "Error opening file: " << tmp_dir + '/' + outname + "_countlinks" << "\n";
         return;
->>>>>>> 2debd9a (update)
     }
 
     for (auto const & k: contiglinks) {
@@ -527,90 +459,10 @@ int main(int argc, char *argv[]) {
         samfile << line << "\n"; // write all line before applying any conditions and proceed with continue
         if (line.empty()) continue;
 
-<<<<<<< HEAD
-                std::string field;
-                iss >> bitflag;
-                iss >> contig_id;
-
-                if ((contig_id == "*") || (contigs_map.find(contig_id) == contigs_map.end())) {
-                    // No reference or not of minimum length, don't process the alignment;
-                    continue;
-                }
-
-                iss >> field >> field;
-                iss >> cigar_str;
-                if (cigar_str.find_first_of("IDNP*") != std::string::npos) {
-                    // indel, don't process the alignment;
-                    if (bitflag & PAIRED_FLAG) {
-                        if (!parsedaln.empty()) {
-                            parsedaln.erase(std::remove_if(parsedaln.begin(), parsedaln.end(),
-                            [contig_id](const al_data& element) {
-                                return element.contig == contig_id;
-                            }),
-                            parsedaln.end());
-                        }  
-                    }
-                    continue;
-                }
-
-                iss >> field >> field >> field >> field;
-                iss >> qual_str;
-                iss >> field >> field;
-                if (field.find("XS") != std::string::npos) {
-                    // suboptimal alignment score is given;
-                    iss >> field >> field >> field >> field >> field >> md_str;
-                } else {
-                    iss >> field >> field >> field >> field >> md_str;
-                }
-
-                md_str = md_str.substr(5, md_str.length());
-
-                auto alnpos = get_alnpos(cigar_str);
-
-                if (std::get<1>(alnpos) == 0) {
-                    // clip at both ends, don't process the alignment;
-                    continue;
-                }
-
-                auto alnstats = get_seqid_alncov(alnpos, qual_str, md_str);
-
-                if ((!std::isnan(alnstats.first)) && (alnstats.second >= 70.0f)) {
-                    // get read direction
-                    unsigned int pair_flag = 0;
-                    if (bitflag & FORWARD_FLAG) {
-                        pair_flag = 1;
-                    } else if (bitflag & REVERSE_FLAG) {
-                        pair_flag = 2;
-                    } else {
-                        std::cerr << "input reads are not paired\n";
-                        return 1;
-                    }
-                    
-                    // get if alignment is paired
-                    bool proper_pair = false;
-                    if (bitflag & PAIRED_FLAG) {
-                        proper_pair = true;
-                    } else {;}
-
-                    if (parsedaln.empty()) {
-                        parsedaln.push_back({currentread_id, contig_id, pair_flag, proper_pair, false, alnstats.first});
-                    } else { // store alignments of current read
-                        if (parsedaln.rbegin()->read == currentread_id) {
-                            storealnstats(parsedaln,alnstats, currentread_id, contig_id, pair_flag, proper_pair);
-                        } else { // new read alignment
-                            counting(parsedaln, contigs_map, contiglinks, sequenceidentity, eachcount);
-                            parsedaln.clear(); // clean alignment data for current read
-                            parsedaln.push_back({currentread_id, contig_id, pair_flag, proper_pair, false, alnstats.first});
-                        }
-                    }
-                }
-            }
-=======
         if (line[0] == '@') {
             process_header_line(line, contigs_map, unique_map, cross_map, minlength);
         } else {
             process_alignment_line(line, contigs_map, unique_map, cross_map, contiglinks, parsedaln, sequenceidentity, read_coverage, eachcount);
->>>>>>> 2debd9a (update)
         }
     }
     // while end

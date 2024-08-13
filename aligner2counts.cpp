@@ -407,7 +407,7 @@ void process_alignment_line(
         if (std::get<1>(alnpos) == 0) return;
 
         auto alnstats = get_seqid_alncov(alnpos, qual_str, md_str);
-        std::cout << currentread_id << " " << contig_id << " " << alnstats.first << " sequence identity "  << alnstats.second << " aligned coverage\n";
+
         if ((!std::isnan(alnstats.first)) && (alnstats.second >= read_coverage)) {
             // get read direction
             // TODO: check this is required for single end

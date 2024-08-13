@@ -1,10 +1,17 @@
 # aligner2counts
-This repository contains script to process read mapping file (.bam) on the fly with mapping process and produce 3 outputs (i) read abundance of contigs, (ii) fraction of reads shared between contigs if found (split-read mapping) and (iii) alignment file in `.sam` format.
-As of now, it is specialized to process only bowtie mapping.
+This repository contains script to process read mapping file (.bam) on the fly with mapping process. It produces the following outputs,
+ - read abundance of contigs (fractional count of total reads mapped to contig, `<sample_id>_count`)
+ - fraction of reads shared between contigs if found (split-read mapping, `<sample_id>_countlinks`)
+ - read abundance by uniquely mapped reads (`<sample_id>_uniqcount`)
+ - read abundance by reads that mapped to multiple contigs (`<sample_id>_crosscount`)
+ - read coverage ((read abundance * read length) / contig length, `<sample_id>_coverage`)
+ - alignment file in `.sam` format (`<sample_id>.sam`)
+ - read-contig pair from alignment (`<sample_id>_mapids`)
+As of now, it is specialized to process only bowtie mapping to compute abundance and coverage. If you have alignment from different tool and want only to get read-contig pair, use `--only-mapids` option
 
 # Installation
 	g++ -o aligner2counts aligner2counts.cpp -O3
-	export PATH=${PATH}/$(pwd) (save this line in .bashrc or .bash_profile for all time access)
+	export PATH=${PATH}/$(pwd) (save this line in .bashrc or .bash_profile for easy access)
 Require gcc version `>=9.4.0`
 
 
